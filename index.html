@@ -1,8 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="application-name" content="Hamim.io">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Hamim.io">
+<meta name="description" content="Hamim Personal Dashboard">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7C6FFF">
+<link rel="manifest" id="pwa-manifest">
+<link rel="apple-touch-icon" id="pwa-icon-link">
 <title>Hamim.io — World Class Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -481,6 +491,14 @@ circle.arc{fill:none;stroke:url(#fg);stroke-width:10;stroke-linecap:round;transi
 .sync-item-chip.synced{background:rgba(0,212,168,.15);border-color:var(--accent2)}
 .sync-item-chip.syncing{background:rgba(255,179,71,.1);border-color:var(--accent4);color:var(--accent4)}
 
+
+
+/* ── FIREBASE CHIPS ── */
+.fb-chip{padding:.5rem .85rem;border-radius:8px;font-size:12px;font-weight:700;background:rgba(128,128,128,0.07);border:1px solid var(--border);color:var(--muted);transition:all .3s;text-align:center}
+.fb-chip.uploading{background:rgba(255,179,71,0.12);border-color:var(--accent4);color:var(--accent4);animation:fb-pulse .7s infinite alternate}
+.fb-chip.done{background:rgba(0,212,168,0.12);border-color:var(--accent2);color:var(--accent2)}
+@keyframes fb-pulse{from{opacity:.55}to{opacity:1}}
+
 </style>
 </head>
 <body>
@@ -518,8 +536,6 @@ circle.arc{fill:none;stroke:url(#fg);stroke-width:10;stroke-linecap:round;transi
   <button class="nav-item" onclick="go('timetable',this);setTimeout(openAlarmModal,300)"><span class="nav-icon">⏰</span> Alarms</button>
   <button class="nav-item" onclick="fcEnter()" style="color:var(--accent3);font-weight:800"><span class="nav-icon">🎯</span> Focus Mode <span class="nav-badge" style="background:var(--accent3)">NEW</span></button>
 
-  <div class="nav-section">Sync & Backup</div>
-  <button class="nav-item" onclick="go('sheets',this)"><span class="nav-icon">📊</span> Google Sheets Sync</button>
   <div class="nav-section">AI & Goals</div>
   <button class="nav-item" onclick="toggleNotifCenter()"><span class="nav-icon">🔔</span> Notifications <span class="nav-badge" id="nav-notif-badge" style="display:none"></span></button>
   <button class="nav-item" onclick="go('ai',this)"><span class="nav-icon">🤖</span> AI Settings</button>
@@ -1668,122 +1684,128 @@ circle.arc{fill:none;stroke:url(#fg);stroke-width:10;stroke-linecap:round;transi
 </div>
 
 
-<!-- ===== GOOGLE SHEETS BACKEND ===== -->
-<div class="page" id="page-sheets">
+<!-- Firebase page removed — hardcoded auto-connect below -->
+<div class="page" id="page-firebase" style="display:none!important">
   <div class="page-header">
     <div>
-      <div class="page-title">📊 Google Sheets Sync</div>
-      <div class="page-sub">Auto-backup your data to Google Sheets — access from anywhere</div>
+      <div class="page-title">🔥 Cloud Sync</div>
+      <div class="page-sub">Firebase দিয়ে data cloud এ save — phone বদলালেও সব data থাকবে</div>
     </div>
-    <div id="sheets-status-badge" style="background:rgba(128,128,128,0.1);color:var(--muted);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700">● Not Connected</div>
+    <div id="fb-status-badge" style="background:rgba(128,128,128,0.1);color:var(--muted);padding:6px 16px;border-radius:50px;font-size:12px;font-weight:700">● Not Connected</div>
   </div>
 
-  <!-- HOW IT WORKS -->
-  <div class="card" style="margin-bottom:1rem;background:linear-gradient(135deg,rgba(0,212,168,0.06),rgba(124,111,255,0.04));border:1.5px solid rgba(0,212,168,0.2)">
-    <div class="card-title">⚙️ Setup — 3 Steps</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+  <!-- SETUP GUIDE -->
+  <div class="card" style="margin-bottom:1rem;background:linear-gradient(135deg,rgba(255,179,71,0.06),rgba(255,107,138,0.04));border:1.5px solid rgba(255,179,71,0.25)">
+    <div class="card-title">⚡ Setup — মাত্র 3 Step (5 মিনিট, সম্পূর্ণ Free)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px">
+      <div style="padding:1rem;background:rgba(255,179,71,0.08);border-radius:12px;border-left:3px solid var(--accent4)">
+        <div style="font-size:22px;margin-bottom:6px">1️⃣</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Firebase Project বানাও</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">console.firebase.google.com → "Add project" → নাম দাও → Google Analytics off করো → Create</div>
+        <a href="https://console.firebase.google.com" target="_blank" class="btn btn-sm btn-primary" style="margin-top:8px;text-decoration:none;display:inline-block;background:linear-gradient(135deg,#FF6B35,#FF8C00)">🔥 Firebase Console →</a>
+      </div>
       <div style="padding:1rem;background:rgba(124,111,255,0.07);border-radius:12px;border-left:3px solid var(--accent)">
-        <div style="font-size:20px;margin-bottom:6px">1️⃣</div>
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Create Sheet</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.5">Google Sheets-এ নতুন spreadsheet বানাও। নাম দাও "Hamim Dashboard"</div>
-        <a href="https://sheets.new" target="_blank" class="btn btn-sm btn-primary" style="margin-top:8px;text-decoration:none;display:inline-block">📄 New Sheet →</a>
+        <div style="font-size:22px;margin-bottom:6px">2️⃣</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Firestore চালু করো</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Build → Firestore Database → Create database → Start in <strong>test mode</strong> → Next → Enable</div>
       </div>
       <div style="padding:1rem;background:rgba(0,212,168,0.07);border-radius:12px;border-left:3px solid var(--accent2)">
-        <div style="font-size:20px;margin-bottom:6px">2️⃣</div>
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Deploy Script</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.5">Extensions → Apps Script → paste নিচের code → Deploy as Web App → Anyone access দাও</div>
-        <button class="btn btn-sm" style="margin-top:8px" onclick="showAppsScript()">📋 Copy Script</button>
-      </div>
-      <div style="padding:1rem;background:rgba(255,179,71,0.07);border-radius:12px;border-left:3px solid var(--accent4)">
-        <div style="font-size:20px;margin-bottom:6px">3️⃣</div>
-        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Paste Web App URL</div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.5">Deploy করার পর URL পাবে — নিচে paste করো</div>
+        <div style="font-size:22px;margin-bottom:6px">3️⃣</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">Config copy করো</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">Project Settings (⚙️) → "Your apps" → Web app (&lt;/&gt;) → Register → firebaseConfig object copy করো → নিচে paste করো</div>
       </div>
     </div>
   </div>
 
-  <!-- CONNECT FORM -->
+  <!-- CONFIG INPUT -->
   <div class="grid2" style="margin-bottom:1rem">
     <div class="card">
-      <div class="card-title">🔗 Connect Your Sheet</div>
+      <div class="card-title">🔑 Firebase Config</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div>
-          <label style="font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px">Web App URL (from Apps Script Deploy)</label>
-          <input type="url" id="sheets-url-inp" placeholder="https://script.google.com/macros/s/..." style="font-size:12px">
+        <div style="padding:.75rem;background:rgba(255,179,71,0.07);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;border-left:3px solid var(--accent4)">
+          Firebase Console → Project Settings → Your apps → Web app → firebaseConfig এর <strong>apiKey, authDomain, projectId</strong> দরকার
         </div>
         <div>
-          <label style="font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px">Nickname (optional)</label>
-          <input type="text" id="sheets-name-inp" placeholder="My Hamim Backup Sheet">
+          <label style="font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px">API Key</label>
+          <input type="password" id="fb-apikey" placeholder="AIzaSy..." style="font-size:12px">
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" onclick="connectSheets()">🔗 Connect</button>
-          <button class="btn" onclick="testSheetsConnection()">🧪 Test</button>
-          <button class="btn btn-danger" onclick="disconnectSheets()">✕ Disconnect</button>
+        <div>
+          <label style="font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px">Auth Domain</label>
+          <input type="text" id="fb-authdomain" placeholder="your-project.firebaseapp.com" style="font-size:12px">
         </div>
-        <div id="sheets-connect-status" style="font-size:12px;color:var(--muted);min-height:16px"></div>
+        <div>
+          <label style="font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px">Project ID</label>
+          <input type="text" id="fb-projectid" placeholder="your-project-id" style="font-size:12px">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:800;color:var(--muted);display:block;margin-bottom:4px">User ID <span style="font-weight:400;color:var(--hint)">(যেকোনো নাম — multiple device এ same দিলে sync হবে)</span></label>
+          <input type="text" id="fb-uid" placeholder="hamim" style="font-size:12px">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" style="background:linear-gradient(135deg,#FF6B35,#FF8C00);border:none" onclick="fbConnect()">🔥 Connect</button>
+          <button class="btn" onclick="fbTest()">🧪 Test</button>
+          <button class="btn btn-danger" onclick="fbDisconnect()">✕ Disconnect</button>
+        </div>
+        <div id="fb-connect-status" style="font-size:12px;color:var(--muted);min-height:16px;font-weight:600"></div>
       </div>
     </div>
+
     <div class="card">
       <div class="card-title">📤 Sync Controls</div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="padding:.75rem;background:rgba(0,212,168,0.06);border-radius:10px">
-          <div style="font-size:12px;font-weight:700;margin-bottom:3px">Last Sync</div>
-          <div style="font-size:13px;font-weight:800;color:var(--accent2)" id="sheets-last-sync">Never</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="padding:.75rem;background:rgba(0,212,168,0.06);border-radius:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:2px">Last Upload</div>
+            <div style="font-size:12px;font-weight:800;color:var(--accent2)" id="fb-last-push">Never</div>
+          </div>
+          <div style="padding:.75rem;background:rgba(255,179,71,0.06);border-radius:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:2px">Last Download</div>
+            <div style="font-size:12px;font-weight:800;color:var(--accent4)" id="fb-last-pull">Never</div>
+          </div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="syncToSheets()" style="flex:1">📤 Sync Now</button>
-          <button class="btn" onclick="pullFromSheets()" style="flex:1">📥 Pull Data</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="fbPush()" style="flex:1;background:linear-gradient(135deg,#FF6B35,#FF8C00);border:none">📤 Upload Now</button>
+          <button class="btn" onclick="fbPull()" style="flex:1">📥 Download</button>
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer">
-          <input type="checkbox" id="sheets-auto-sync" onchange="toggleAutoSync(this.checked)" style="width:16px;height:16px;accent-color:var(--accent)">
-          Auto-sync every 30 minutes
+          <input type="checkbox" id="fb-auto" onchange="fbToggleAuto(this.checked)" style="width:16px;height:16px;accent-color:var(--accent4)">
+          Auto-upload (প্রতি 5 মিনিটে)
         </label>
-        <div id="sheets-auto-status" style="font-size:11px;color:var(--muted)"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WHAT GETS SYNCED -->
-  <div class="card" style="margin-bottom:1rem">
-    <div class="card-title">📋 What Gets Synced</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">
-      <div class="sync-item-chip" id="sync-tasks">📋 Tasks</div>
-      <div class="sync-item-chip" id="sync-habits">✅ Habits</div>
-      <div class="sync-item-chip" id="sync-goals">🎯 Goals</div>
-      <div class="sync-item-chip" id="sync-budget">💰 Budget</div>
-      <div class="sync-item-chip" id="sync-cgpa">📊 CGPA</div>
-      <div class="sync-item-chip" id="sync-courses">📘 Courses</div>
-    </div>
-  </div>
-
-  <!-- SYNC LOG -->
-  <div class="card">
-    <div class="card-title" style="justify-content:space-between">
-      <span>📜 Sync Log</span>
-      <button class="btn btn-sm" onclick="clearSyncLog()">Clear</button>
-    </div>
-    <div id="sync-log" style="font-family:var(--mono);font-size:11px;color:var(--muted);max-height:200px;overflow-y:auto;line-height:1.8"></div>
-  </div>
-
-  <!-- APPS SCRIPT CODE MODAL -->
-  <div id="apps-script-modal" class="modal-backdrop" onclick="if(event.target===this)this.classList.remove('open')">
-    <div class="modal-box" style="max-width:680px">
-      <div class="modal-header">
-        <span>📋 Google Apps Script Code</span>
-        <button class="modal-close" onclick="document.getElementById('apps-script-modal').classList.remove('open')">✕</button>
-      </div>
-      <div class="modal-body" style="gap:8px">
-        <div style="font-size:12px;color:var(--muted);line-height:1.6;background:rgba(124,111,255,0.06);padding:.75rem;border-radius:10px">
-          <strong>Steps:</strong> Google Sheets → Extensions → Apps Script → সব code delete করো → নিচেরটা paste করো → Save → Deploy → New Deployment → Web App → Execute as: Me → Who has access: Anyone → Deploy → URL copy করো
+        <div style="padding:.65rem .85rem;background:rgba(255,107,138,0.07);border-radius:8px;border-left:3px solid var(--accent3)">
+          <div style="font-size:11px;font-weight:700;color:var(--accent3);margin-bottom:2px">⚠️ নতুন device এ?</div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.5">একই Config + User ID দিয়ে Connect → তারপর <strong>Download</strong> চাপো।</div>
         </div>
-        <pre id="apps-script-code" style="background:rgba(0,0,0,0.06);border-radius:10px;padding:1rem;font-size:11px;overflow-x:auto;line-height:1.6;white-space:pre-wrap;max-height:400px;overflow-y:auto;font-family:var(--mono);color:var(--text)"></pre>
-        <button class="btn btn-primary" onclick="copyAppsScript()">📋 Copy to Clipboard</button>
       </div>
     </div>
+  </div>
+
+  <!-- WHAT SYNCS -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="card-title">📋 যা যা Sync হবে</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+      <div class="fb-chip" id="fb-chip-tasks">📋 Tasks</div>
+      <div class="fb-chip" id="fb-chip-habits">✅ Habits</div>
+      <div class="fb-chip" id="fb-chip-goals">🎯 Goals</div>
+      <div class="fb-chip" id="fb-chip-budget">💰 Budget</div>
+      <div class="fb-chip" id="fb-chip-cgpa">📊 CGPA</div>
+      <div class="fb-chip" id="fb-chip-courses">📘 Courses</div>
+      <div class="fb-chip" id="fb-chip-timetable">🕐 Timetable</div>
+      <div class="fb-chip" id="fb-chip-links">🔗 Links</div>
+      <div class="fb-chip" id="fb-chip-note">📝 Notes</div>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+      <div class="card-title" style="margin-bottom:0">📜 Sync Log</div>
+      <button class="btn btn-sm" onclick="fbLogClear()">Clear</button>
+    </div>
+    <div id="fb-log" style="font-family:var(--mono);font-size:11px;color:var(--muted);max-height:180px;overflow-y:auto;line-height:1.9"></div>
   </div>
 </div>
 
-</div><!-- end main -->
+</div><!-- end main --></div><!-- end main -->
 </div><!-- end shell -->
 
 <!-- VOICE FAB — bottom center -->
@@ -2033,7 +2055,7 @@ function go(page, el){
   if(page==='subjects') setTimeout(renderSubjects, 100);
   if(page==='cgpa') setTimeout(calcCGPA, 100);
   if(page==='home'){ setTimeout(()=>{ renderHomeDashboard(); refreshNowCard(); }, 100); }
-  if(page==='sheets') setTimeout(initSheetsUI, 50);
+  if(page==='firebase') setTimeout(initFBUI, 50);
 }
 function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('visible'); }
 function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('visible'); }
@@ -4496,7 +4518,7 @@ window.onload=function(){
   renderCourses();
   renderDocs();
   renderLocalTracks();
-  initSheetsUI();
+  initFBUI();
   refreshNowCard();
   initProviderUI();
   renderNotifList();
@@ -4546,6 +4568,253 @@ window.onload=function(){
   <div class="alarm-msg" id="alarm-modal-msg"></div>
   <button class="alarm-dismiss" onclick="dismissAlarm()">✓ Dismiss Alarm</button>
 </div>
+
+
+
+<script>
+(function(){
+  const svgIcon=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#7C6FFF"/><text x="256" y="340" font-family="Arial Black" font-weight="900" font-size="280" fill="white" text-anchor="middle">H</text></svg>`;
+  const iconUri='data:image/svg+xml;base64,'+btoa(svgIcon);
+  const il=document.getElementById('pwa-icon-link'); if(il) il.href=iconUri;
+  const manifest={name:"Hamim.io Dashboard",short_name:"Hamim.io",description:"Personal Dashboard",start_url:"./",display:"standalone",background_color:"#0A0919",theme_color:"#7C6FFF",orientation:"any",icons:[{src:iconUri,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}]};
+  const mb=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+  const ml=document.getElementById('pwa-manifest'); if(ml) ml.href=URL.createObjectURL(mb);
+  const swCode=`const CACHE='hamim-v2';self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});self.addEventListener('fetch',e=>{if(e.request.url.startsWith(self.location.origin)){e.respondWith(caches.open(CACHE).then(c=>c.match(e.request).then(r=>{const f=fetch(e.request).then(res=>{c.put(e.request,res.clone());return res;}).catch(()=>r);return r||f;})));}});`;
+  if('serviceWorker' in navigator){const sb=new Blob([swCode],{type:'text/javascript'});navigator.serviceWorker.register(URL.createObjectURL(sb)).catch(()=>{});}
+  let dp=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;showInstBanner();});
+  function showInstBanner(){
+    if(localStorage.getItem('hamim_pwa_ok')||document.getElementById('pwa-banner')) return;
+    const b=document.createElement('div');b.id='pwa-banner';
+    b.innerHTML=`<div style="display:flex;align-items:center;gap:12px;flex:1"><div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#7C6FFF,#00D4A8);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:white;flex-shrink:0">H</div><div><div style="font-weight:800;font-size:13px">Hamim.io — App হিসেবে Install করো!</div><div style="font-size:11px;opacity:.7;margin-top:1px">Phone ও PC তে app এ রাখো 📱💻</div></div></div><div style="display:flex;gap:6px;flex-shrink:0"><button onclick="window._pwaInstall()" style="background:linear-gradient(135deg,#7C6FFF,#6456ff);color:white;border:none;padding:7px 16px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer">⬇️ Install</button><button onclick="this.closest('#pwa-banner').remove()" style="background:rgba(255,255,255,.15);color:white;border:none;padding:7px 10px;border-radius:50px;font-size:12px;cursor:pointer">✕</button></div>`;
+    Object.assign(b.style,{position:'fixed',bottom:'80px',left:'50%',transform:'translateX(-50%)',background:'linear-gradient(135deg,rgba(12,10,35,.97),rgba(20,18,50,.97))',backdropFilter:'blur(20px)',border:'1px solid rgba(124,111,255,.35)',borderRadius:'16px',padding:'12px 16px',zIndex:'99999',display:'flex',alignItems:'center',gap:'12px',boxShadow:'0 8px 40px rgba(124,111,255,.4)',color:'white',maxWidth:'420px',width:'calc(100% - 32px)',fontFamily:'var(--sans,sans-serif)',animation:'toastPop .4s cubic-bezier(.34,1.56,.64,1)'});
+    document.body.appendChild(b);
+  }
+  window._pwaInstall=async function(){
+    if(!dp){const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);const msg=isIOS?'Safari → Share → Add to Home Screen':(/Android/.test(navigator.userAgent)?'Chrome Menu → Install App':'Browser address bar এর install icon চাপো');if(typeof toast==='function')toast(msg);else alert(msg);return;}
+    dp.prompt();const{outcome}=await dp.userChoice;
+    if(outcome==='accepted'){localStorage.setItem('hamim_pwa_ok','1');if(typeof toast==='function')toast('🎉 App installed!');}
+    dp=null;const b=document.getElementById('pwa-banner');if(b)b.remove();
+  };
+  window.addEventListener('appinstalled',()=>{localStorage.setItem('hamim_pwa_ok','1');const b=document.getElementById('pwa-banner');if(b)b.remove();if(typeof toast==='function')toast('🎉 Hamim.io app installed!');});
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{
+      if(!localStorage.getItem('hamim_pwa_ok')&&!window.matchMedia('(display-mode: standalone)').matches){
+        const btn=document.createElement('button');
+        btn.innerHTML='📲 Install App';
+        Object.assign(btn.style,{display:'block',width:'100%',marginTop:'8px',background:'linear-gradient(135deg,rgba(124,111,255,.15),rgba(0,212,168,.08))',border:'1px solid rgba(124,111,255,.25)',borderRadius:'10px',padding:'8px',fontSize:'12px',fontWeight:'700',cursor:'pointer',color:'var(--accent,#7C6FFF)',fontFamily:'var(--sans,sans-serif)'});
+        btn.onclick=window._pwaInstall;
+        const f=document.querySelector('.sidebar-footer');if(f)f.appendChild(btn);
+      }
+    },1500);
+  });
+})();
+</script>
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- FIREBASE CLOUD SYNC JS                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<script type="module">
+// Firebase v9+ modular SDK (loaded from CDN, no bundler needed)
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, setDoc, getDoc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+// ══════════════════════════════════════════════════════════════
+// 🔥 HARDCODED FIREBASE CONFIG — কোনো UI দরকার নেই
+// ══════════════════════════════════════════════════════════════
+const _FB_CONFIG = {
+  apiKey:            "AIzaSyAGe3McPI1r9L-c4IaduYmpvJEMODqXTmw",
+  authDomain:        "computer-assistant-4e9b6.firebaseapp.com",
+  projectId:         "computer-assistant-4e9b6",
+  storageBucket:     "computer-assistant-4e9b6.firebasestorage.app",
+  messagingSenderId: "1073465622224",
+  appId:             "1:1073465622224:web:5746e585015d29591d68d5",
+};
+const _FB_UID = "hamim"; // তোমার user ID
+
+// ── State ──────────────────────────────────────────────────────
+let _fbApp = null, _db = null, _fbAutoTimer = null;
+let _fbLog = JSON.parse(localStorage.getItem('fb_log') || '[]');
+
+// FB object — credentials এখন hardcoded, localStorage নয়
+const FB = {
+  get apiKey(){ return _FB_CONFIG.apiKey; },
+  get authDomain(){ return _FB_CONFIG.authDomain; },
+  get projectId(){ return _FB_CONFIG.projectId; },
+  get uid(){ return _FB_UID; },
+};
+
+// Expose functions to window so onclick= handlers work
+function _expose(name, fn){ window[name] = fn; }
+
+// ── Auto-Init Firebase on page load ───────────────────────────
+async function _autoInit(){
+  try {
+    _fbApp = initializeApp(_FB_CONFIG, 'hamim-app');
+    _db = getFirestore(_fbApp);
+    console.log('🔥 Firebase auto-connected!');
+    // Auto-upload চালু — প্রতি 5 মিনিটে
+    _fbStartAuto();
+    // প্রথমবার load এ data pull করো (নতুন device হলে কাজে আসবে)
+    const firstLoad = !localStorage.getItem('fb_ever_pulled');
+    if(firstLoad){
+      setTimeout(()=> fbPull(), 2000);
+    }
+  } catch(e){
+    console.warn('Firebase init error:', e.message);
+  }
+}
+
+// ── UI Init (এখন শুধু badge update করে, page নেই) ────────────
+function initFBUI(){ /* page removed — nothing to render */ }
+_expose('initFBUI', initFBUI);
+
+function _fbUpdateBadge(){
+  const nb = document.getElementById('nav-sync-badge');
+  if(nb){ nb.style.display = _db ? '' : 'none'; nb.textContent = '🔥'; }
+}
+
+// ── Connect/Disconnect stubs (backward compat) ─────────────────
+async function fbConnect(){ /* no-op, auto-connected */ }
+function fbDisconnect(){ _db = null; _fbApp = null; _fbStopAuto(); }
+async function fbTest(){
+  if(!_db){ if(typeof toast==='function') toast('❌ Firebase connected নেই!'); return; }
+  try {
+    const ref = doc(_db, 'hamim_users', FB.uid, 'ping', 'test');
+    await setDoc(ref, { ok: true, ts: Date.now() });
+    if(typeof toast==='function') toast('🔥 Firebase OK!');
+  } catch(e){
+    if(typeof toast==='function') toast('❌ Test failed: ' + e.message.slice(0,50));
+  }
+}
+_expose('fbConnect', fbConnect);
+_expose('fbDisconnect', fbDisconnect);
+_expose('fbTest', fbTest);
+
+// ── Build Payload ──────────────────────────────────────────────
+function _fbPayload(){
+  return {
+    tasks:       window.STATE?.tasks || {},
+    habits:      (window.STATE?.habits||[]).map(h=>({name:h.name,color:h.color,goalMin:h.goalMin,cells:h.cells,timerSec:h.timerSec||0})),
+    goals:       window.STATE?.goals || [],
+    income:      window.STATE?.income || [],
+    expenses:    window.STATE?.expenses || [],
+    semesters:   window.STATE?.semesters || [],
+    gre:         window.STATE?.gre || {},
+    progress:    window.STATE?.progress || {},
+    courses:     typeof window.courses !== 'undefined' ? window.courses : [],
+    note:        window.STATE?.note || '',
+    timetable:   window.STATE?.timetable || {},
+    customLinks: window.STATE?.customLinks || [],
+    savedVideos: window.STATE?.savedVideos || [],
+    syncAt:      new Date().toISOString(),
+  };
+}
+
+// ── Push (Upload) ──────────────────────────────────────────────
+const CHIPS = ['tasks','habits','goals','budget','cgpa','courses','timetable','links','note'];
+function _setChips(cls){ CHIPS.forEach(c=>{ const el=document.getElementById('fb-chip-'+c); if(el) el.className='fb-chip '+(cls||''); }); }
+
+async function fbPush(){
+  if(!_db){ if(typeof toast==='function') toast('❌ আগে Firebase connect করো!'); if(typeof go==='function') go('firebase',null); return; }
+  _setChips('uploading');
+  if(typeof toast==='function') toast('📤 Firebase এ Upload করছি...');
+  try {
+    const payload = _fbPayload();
+    const batch = writeBatch(_db);
+    Object.entries(payload).forEach(([k, v]) => {
+      // Firestore can't store undefined — sanitize
+      const safe = JSON.parse(JSON.stringify(v ?? null));
+      const ref = doc(_db, 'hamim_users', FB.uid, 'data', k);
+      batch.set(ref, { value: safe, updatedAt: new Date().toISOString() });
+    });
+    await batch.commit();
+    const t = _fbTime();
+    localStorage.setItem('fb_last_push', t);
+    const el = document.getElementById('fb-last-push'); if(el) el.textContent = t;
+    _setChips('done');
+    _fbLog_add('🔥 Uploaded ' + Object.keys(payload).length + ' datasets — ' + t);
+    if(typeof toast==='function') toast('🔥 Firebase Upload সফল!');
+    if(typeof playClick==='function') playClick('success');
+    setTimeout(()=>_setChips(''), 4000);
+  } catch(e) {
+    _setChips('');
+    _fbLog_add('❌ Upload failed: ' + e.message.slice(0,80));
+    if(typeof toast==='function') toast('❌ Upload failed: ' + e.message.slice(0,50));
+  }
+}
+_expose('fbPush', fbPush);
+
+// ── Pull (Download) ────────────────────────────────────────────
+async function fbPull(){
+  if(!_db){ if(typeof toast==='function') toast('❌ আগে connect করো!'); return; }
+  if(typeof toast==='function') toast('📥 Firebase থেকে Download করছি...');
+  try {
+    const keys = ['tasks','habits','goals','income','expenses','semesters','gre','progress','courses','note','timetable','customLinks','savedVideos'];
+    let restored = 0;
+    for(const k of keys){
+      const ref = doc(_db, 'hamim_users', FB.uid, 'data', k);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) continue;
+      const v = snap.data().value;
+      try {
+        if(k==='tasks'){ window.STATE.tasks=v; if(typeof saveState==='function') saveState('tasks'); if(typeof renderTasks==='function') renderTasks(); restored++; }
+        else if(k==='habits'){ window.STATE.habits=v; if(typeof saveState==='function') saveState('habits'); if(typeof renderHabits==='function') renderHabits(); restored++; }
+        else if(k==='goals'){ window.STATE.goals=v; if(typeof saveState==='function') saveState('goals'); if(typeof renderGoals==='function') renderGoals(); restored++; }
+        else if(k==='income'){ window.STATE.income=v; if(typeof saveState==='function') saveState('income'); restored++; }
+        else if(k==='expenses'){ window.STATE.expenses=v; if(typeof saveState==='function') saveState('expenses'); if(typeof renderBudget==='function') renderBudget(); restored++; }
+        else if(k==='semesters'){ window.STATE.semesters=v; if(typeof saveState==='function') saveState('semesters'); if(typeof calcCGPA==='function') calcCGPA(); restored++; }
+        else if(k==='gre'){ window.STATE.gre=v; if(typeof saveState==='function') saveState('gre'); if(typeof loadGRE==='function') loadGRE(); restored++; }
+        else if(k==='progress'){ window.STATE.progress=v; if(typeof saveState==='function') saveState('progress'); restored++; }
+        else if(k==='courses'){ window.courses=v; if(typeof saveCourses==='function') saveCourses(); if(typeof renderCourses==='function') renderCourses(); restored++; }
+        else if(k==='note'){ window.STATE.note=v; if(typeof saveState==='function') saveState('note'); const n=document.getElementById('sticky-note'); if(n) n.value=v||''; restored++; }
+        else if(k==='timetable'){ window.STATE.timetable=v; if(typeof saveState==='function') saveState('timetable'); if(typeof renderTimetable==='function') renderTimetable(); restored++; }
+        else if(k==='customLinks'){ window.STATE.customLinks=v; if(typeof saveState==='function') saveState('customLinks'); if(typeof renderCustomLinks==='function') renderCustomLinks(); restored++; }
+        else if(k==='savedVideos'){ window.STATE.savedVideos=v; if(typeof saveState==='function') saveState('savedVideos'); restored++; }
+      } catch(err){ console.warn('Restore error:', k, err); }
+    }
+    const t = _fbTime();
+    localStorage.setItem('fb_last_pull', t);
+    localStorage.setItem('fb_ever_pulled', '1');
+    const el = document.getElementById('fb-last-pull'); if(el) el.textContent = t;
+    _fbLog_add('📥 Downloaded ' + restored + ' datasets — ' + t);
+    if(typeof toast==='function') toast('🔥 ' + restored + ' টা data restore হয়েছে!');
+    if(typeof playClick==='function') playClick('success');
+    if(typeof renderHomeDashboard==='function') renderHomeDashboard();
+  } catch(e) {
+    _fbLog_add('❌ Download failed: ' + e.message.slice(0,80));
+    if(typeof toast==='function') toast('❌ Download failed: ' + e.message.slice(0,50));
+  }
+}
+_expose('fbPull', fbPull);
+
+// ── Auto Sync ──────────────────────────────────────────────────
+function fbToggleAuto(on){
+  localStorage.setItem('fb_auto', on ? '1' : '');
+  if(on){ _fbStartAuto(); if(typeof toast==='function') toast('⏱ Auto-upload চালু — প্রতি 5 মিনিটে'); }
+  else { _fbStopAuto(); if(typeof toast==='function') toast('Auto-upload বন্ধ'); }
+}
+_expose('fbToggleAuto', fbToggleAuto);
+function _fbStartAuto(){ _fbStopAuto(); _fbAutoTimer=setInterval(fbPush, 5*60*1000); }
+function _fbStopAuto(){ if(_fbAutoTimer){ clearInterval(_fbAutoTimer); _fbAutoTimer=null; } }
+
+// ── Helpers ────────────────────────────────────────────────────
+function _fbTime(){ return new Date().toLocaleTimeString('en-BD'); }
+function _fbLog_add(msg){
+  _fbLog.unshift('['+_fbTime()+'] '+msg);
+  if(_fbLog.length>40) _fbLog=_fbLog.slice(0,40);
+  localStorage.setItem('fb_log', JSON.stringify(_fbLog));
+  _fbRenderLog();
+}
+function _fbRenderLog(){
+  const el=document.getElementById('fb-log'); if(!el) return;
+  el.innerHTML=_fbLog.length?_fbLog.map(l=>`<div>${l}</div>`).join(''):'<div style="color:var(--hint)">No sync history yet</div>';
+}
+function fbLogClear(){ _fbLog=[]; localStorage.removeItem('fb_log'); _fbRenderLog(); }
+_expose('fbLogClear', fbLogClear);
+
+// 🔥 Auto-init on page load — credentials hardcoded, no UI needed
+window.addEventListener('load', ()=>{ setTimeout(_autoInit, 500); });
+</script>
 
 </body>
 </html>
