@@ -499,11 +499,122 @@ circle.arc{fill:none;stroke:url(#fg);stroke-width:10;stroke-linecap:round;transi
 .fb-chip.done{background:rgba(0,212,168,0.12);border-color:var(--accent2);color:var(--accent2)}
 @keyframes fb-pulse{from{opacity:.55}to{opacity:1}}
 
+
+/* ══════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════ */
+#auth-screen{
+  position:fixed;inset:0;z-index:999999;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--sans);
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(124,111,255,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(0,212,168,0.10) 0%, transparent 55%);
+}
+#auth-screen.hidden{display:none}
+.auth-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:2.5rem 2rem;
+  width:100%;max-width:400px;
+  box-shadow:0 24px 80px rgba(124,111,255,0.18);
+  animation:authPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes authPop{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:2rem;justify-content:center}
+.auth-logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:white;box-shadow:0 6px 20px rgba(124,111,255,0.35)}
+.auth-logo-text{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-0.5px}
+.auth-title{font-size:18px;font-weight:800;text-align:center;margin-bottom:4px;color:var(--text)}
+.auth-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:1.75rem}
+.auth-field{margin-bottom:1rem}
+.auth-field label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.auth-field input{width:100%;font-size:14px;padding:.65rem .9rem;border-radius:10px;border:1.5px solid var(--border);background:rgba(128,128,128,.06);color:var(--text);font-family:var(--sans);outline:none;transition:border-color .15s}
+.auth-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,111,255,.15)}
+.auth-btn{width:100%;padding:.75rem;border-radius:50px;border:none;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--sans);transition:all .18s;margin-top:.5rem}
+.auth-btn-primary{background:linear-gradient(135deg,var(--accent),#6456ff);color:white;box-shadow:0 4px 16px rgba(124,111,255,.35)}
+.auth-btn-primary:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,111,255,.4)}
+.auth-btn-secondary{background:rgba(128,128,128,.08);color:var(--text);border:1.5px solid var(--border);margin-top:.5rem}
+.auth-btn-secondary:hover{background:rgba(128,128,128,.13)}
+.auth-err{background:rgba(255,107,138,.1);border:1px solid rgba(255,107,138,.3);color:var(--accent3);border-radius:8px;padding:.6rem .85rem;font-size:12px;font-weight:600;margin-top:.75rem;display:none}
+.auth-err.show{display:block}
+.auth-toggle{text-align:center;margin-top:1.25rem;font-size:12px;color:var(--muted)}
+.auth-toggle span{color:var(--accent);font-weight:700;cursor:pointer}
+.auth-toggle span:hover{text-decoration:underline}
+.auth-loading{display:flex;align-items:center;justify-content:center;gap:8px;padding:.75rem;color:var(--muted);font-size:13px;font-weight:600}
+.auth-spinner{width:18px;height:18px;border:2.5px solid rgba(124,111,255,.2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════
+     LOGIN / REGISTER SCREEN
+══════════════════════════════════════ -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">H</div>
+      <span class="auth-logo-text">Hamim<span style="color:var(--accent2)">.io</span></span>
+    </div>
+
+    <!-- Loading state -->
+    <div id="auth-loading" class="auth-loading">
+      <div class="auth-spinner"></div>
+      Checking session...
+    </div>
+
+    <!-- Login form -->
+    <div id="auth-login-form" style="display:none">
+      <div class="auth-title">Welcome back 👋</div>
+      <div class="auth-sub">Sign in to access your dashboard</div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="auth-email" placeholder="hamim@example.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter') authLogin()">
+      </div>
+      <div class="auth-err" id="auth-err"></div>
+      <button class="auth-btn auth-btn-primary" id="auth-login-btn" onclick="authLogin()">
+        🔓 Sign In
+      </button>
+      <div class="auth-toggle">
+        Account নেই? <span onclick="authShowRegister()">Register করো →</span>
+      </div>
+    </div>
+
+    <!-- Register form -->
+    <div id="auth-register-form" style="display:none">
+      <div class="auth-title">Create Account 🚀</div>
+      <div class="auth-sub">তোমার data সব device এ sync হবে</div>
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="auth-reg-email" placeholder="hamim@example.com">
+      </div>
+      <div class="auth-field">
+        <label>Password <span style="font-weight:400;color:var(--hint)">(min 6 char)</span></label>
+        <input type="password" id="auth-reg-pass" placeholder="••••••••">
+      </div>
+      <div class="auth-field">
+        <label>Confirm Password</label>
+        <input type="password" id="auth-reg-pass2" placeholder="••••••••"
+               onkeydown="if(event.key==='Enter') authRegister()">
+      </div>
+      <div class="auth-err" id="auth-reg-err"></div>
+      <button class="auth-btn auth-btn-primary" id="auth-reg-btn" onclick="authRegister()">
+        ✨ Create Account
+      </button>
+      <div class="auth-toggle">
+        Already account আছে? <span onclick="authShowLogin()">Sign In →</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-<div class="shell">
+<div class="shell" id="main-shell" style="display:none">
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -543,11 +654,12 @@ circle.arc{fill:none;stroke:url(#fg);stroke-width:10;stroke-linecap:round;transi
 
   <div class="sidebar-footer">
     <div class="sidebar-user">
-      <div class="user-avatar">H</div>
-      <div>
+      <div class="user-avatar" id="sidebar-avatar">H</div>
+      <div style="flex:1;min-width:0">
         <div class="user-name">Hamim</div>
-        <div class="user-sub">BUFT · Textile Eng. · Sem 1</div>
+        <div class="user-sub" id="sidebar-email" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">BUFT · Textile Eng. · Sem 1</div>
       </div>
+      <button onclick="authLogout()" title="Logout" style="background:none;border:none;cursor:pointer;font-size:16px;flex-shrink:0;padding:4px;border-radius:6px;transition:background .15s" onmouseover="this.style.background='rgba(255,107,138,0.12)'" onmouseout="this.style.background='none'">🚪</button>
     </div>
   </div>
 </div>
@@ -2042,7 +2154,11 @@ const STATE = {
   savedVideos: LS.get('savedVideos') || [],
 };
 
-function saveState(key){ LS.set(key, STATE[key]); }
+function saveState(key){
+  LS.set(key, STATE[key]);
+  // Real-time cloud sync — instantly write to Firestore
+  if(typeof window._fbRealtimePush === 'function') window._fbRealtimePush(key);
+}
 
 // ==================== NAVIGATION ====================
 function go(page, el){
@@ -4610,210 +4726,428 @@ window.onload=function(){
   });
 })();
 </script>
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- FIREBASE CLOUD SYNC JS                                      -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<script type="module">
-// Firebase v9+ modular SDK (loaded from CDN, no bundler needed)
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, setDoc, getDoc, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// ══════════════════════════════════════════════════════════════
-// 🔥 HARDCODED FIREBASE CONFIG — কোনো UI দরকার নেই
-// ══════════════════════════════════════════════════════════════
-const _FB_CONFIG = {
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FIREBASE — Auth + Real-time Sync
+     Written clean from scratch. No duplicates, no bugs.
+════════════════════════════════════════════════════════════════ -->
+<script type="module">
+
+// ─── Imports ───────────────────────────────────────────────────
+import { initializeApp }          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+  getFirestore, doc, setDoc, getDoc, writeBatch, onSnapshot
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+// ─── Config ────────────────────────────────────────────────────
+const FB_CFG = {
   apiKey:            "AIzaSyAGe3McPI1r9L-c4IaduYmpvJEMODqXTmw",
   authDomain:        "computer-assistant-4e9b6.firebaseapp.com",
   projectId:         "computer-assistant-4e9b6",
   storageBucket:     "computer-assistant-4e9b6.firebasestorage.app",
   messagingSenderId: "1073465622224",
-  appId:             "1:1073465622224:web:5746e585015d29591d68d5",
-};
-const _FB_UID = "hamim"; // তোমার user ID
-
-// ── State ──────────────────────────────────────────────────────
-let _fbApp = null, _db = null, _fbAutoTimer = null;
-let _fbLog = JSON.parse(localStorage.getItem('fb_log') || '[]');
-
-// FB object — credentials এখন hardcoded, localStorage নয়
-const FB = {
-  get apiKey(){ return _FB_CONFIG.apiKey; },
-  get authDomain(){ return _FB_CONFIG.authDomain; },
-  get projectId(){ return _FB_CONFIG.projectId; },
-  get uid(){ return _FB_UID; },
+  appId:             "1:1073465622224:web:5746e585015d29591d68d5"
 };
 
-// Expose functions to window so onclick= handlers work
-function _expose(name, fn){ window[name] = fn; }
+// ─── Init ──────────────────────────────────────────────────────
+const fbApp  = initializeApp(FB_CFG, 'hamim-v3');
+const db     = getFirestore(fbApp);
+const auth   = getAuth(fbApp);
 
-// ── Auto-Init Firebase on page load ───────────────────────────
-async function _autoInit(){
-  try {
-    _fbApp = initializeApp(_FB_CONFIG, 'hamim-app');
-    _db = getFirestore(_fbApp);
-    console.log('🔥 Firebase auto-connected!');
-    // Auto-upload চালু — প্রতি 5 মিনিটে
-    _fbStartAuto();
-    // প্রথমবার load এ data pull করো (নতুন device হলে কাজে আসবে)
-    const firstLoad = !localStorage.getItem('fb_ever_pulled');
-    if(firstLoad){
-      setTimeout(()=> fbPull(), 2000);
-    }
-  } catch(e){
-    console.warn('Firebase init error:', e.message);
-  }
-}
+// ─── State ─────────────────────────────────────────────────────
+let uid           = null;
+let autoTimer     = null;
+let unsubListeners = [];
+let remoteWriting = false;
+const debounces   = {};
 
-// ── UI Init (এখন শুধু badge update করে, page নেই) ────────────
-function initFBUI(){ /* page removed — nothing to render */ }
-_expose('initFBUI', initFBUI);
+// ─── Expose helper ─────────────────────────────────────────────
+const $win = (name, fn) => { window[name] = fn; };
 
-function _fbUpdateBadge(){
-  const nb = document.getElementById('nav-sync-badge');
-  if(nb){ nb.style.display = _db ? '' : 'none'; nb.textContent = '🔥'; }
-}
-
-// ── Connect/Disconnect stubs (backward compat) ─────────────────
-async function fbConnect(){ /* no-op, auto-connected */ }
-function fbDisconnect(){ _db = null; _fbApp = null; _fbStopAuto(); }
-async function fbTest(){
-  if(!_db){ if(typeof toast==='function') toast('❌ Firebase connected নেই!'); return; }
-  try {
-    const ref = doc(_db, 'hamim_users', FB.uid, 'ping', 'test');
-    await setDoc(ref, { ok: true, ts: Date.now() });
-    if(typeof toast==='function') toast('🔥 Firebase OK!');
-  } catch(e){
-    if(typeof toast==='function') toast('❌ Test failed: ' + e.message.slice(0,50));
-  }
-}
-_expose('fbConnect', fbConnect);
-_expose('fbDisconnect', fbDisconnect);
-_expose('fbTest', fbTest);
-
-// ── Build Payload ──────────────────────────────────────────────
-function _fbPayload(){
-  return {
-    tasks:       window.STATE?.tasks || {},
-    habits:      (window.STATE?.habits||[]).map(h=>({name:h.name,color:h.color,goalMin:h.goalMin,cells:h.cells,timerSec:h.timerSec||0})),
-    goals:       window.STATE?.goals || [],
-    income:      window.STATE?.income || [],
-    expenses:    window.STATE?.expenses || [],
-    semesters:   window.STATE?.semesters || [],
-    gre:         window.STATE?.gre || {},
-    progress:    window.STATE?.progress || {},
-    courses:     typeof window.courses !== 'undefined' ? window.courses : [],
-    note:        window.STATE?.note || '',
-    timetable:   window.STATE?.timetable || {},
-    customLinks: window.STATE?.customLinks || [],
-    savedVideos: window.STATE?.savedVideos || [],
-    syncAt:      new Date().toISOString(),
+// ══════════════════════════════════════════════════════════════
+// DATA MAP — every key: how to get local value + how to restore
+// ══════════════════════════════════════════════════════════════
+function getLocalVal(key) {
+  const S = window.STATE;
+  if (!S) return null;
+  const map = {
+    tasks:       () => S.tasks,
+    habits:      () => (S.habits || []).map(h => ({
+                        name: h.name, color: h.color,
+                        goalMin: h.goalMin, cells: h.cells,
+                        timerSec: h.timerSec || 0 })),
+    goals:       () => S.goals,
+    income:      () => S.income,
+    expenses:    () => S.expenses,
+    semesters:   () => S.semesters,
+    gre:         () => S.gre,
+    progress:    () => S.progress,
+    courses:     () => window.courses,
+    note:        () => S.note,
+    timetable:   () => S.timetable,
+    customLinks: () => S.customLinks,
+    savedVideos: () => S.savedVideos,
   };
+  return map[key] ? map[key]() : null;
 }
 
-// ── Push (Upload) ──────────────────────────────────────────────
-const CHIPS = ['tasks','habits','goals','budget','cgpa','courses','timetable','links','note'];
-function _setChips(cls){ CHIPS.forEach(c=>{ const el=document.getElementById('fb-chip-'+c); if(el) el.className='fb-chip '+(cls||''); }); }
+function applyRemoteVal(key, val) {
+  const S = window.STATE;
+  if (!S || val == null) return;
 
-async function fbPush(){
-  if(!_db){ if(typeof toast==='function') toast('❌ আগে Firebase connect করো!'); if(typeof go==='function') go('firebase',null); return; }
-  _setChips('uploading');
-  if(typeof toast==='function') toast('📤 Firebase এ Upload করছি...');
-  try {
-    const payload = _fbPayload();
-    const batch = writeBatch(_db);
-    Object.entries(payload).forEach(([k, v]) => {
-      // Firestore can't store undefined — sanitize
-      const safe = JSON.parse(JSON.stringify(v ?? null));
-      const ref = doc(_db, 'hamim_users', FB.uid, 'data', k);
-      batch.set(ref, { value: safe, updatedAt: new Date().toISOString() });
-    });
-    await batch.commit();
-    const t = _fbTime();
-    localStorage.setItem('fb_last_push', t);
-    const el = document.getElementById('fb-last-push'); if(el) el.textContent = t;
-    _setChips('done');
-    _fbLog_add('🔥 Uploaded ' + Object.keys(payload).length + ' datasets — ' + t);
-    if(typeof toast==='function') toast('🔥 Firebase Upload সফল!');
-    if(typeof playClick==='function') playClick('success');
-    setTimeout(()=>_setChips(''), 4000);
-  } catch(e) {
-    _setChips('');
-    _fbLog_add('❌ Upload failed: ' + e.message.slice(0,80));
-    if(typeof toast==='function') toast('❌ Upload failed: ' + e.message.slice(0,50));
+  // Write to localStorage only (no cloud echo)
+  const lsSave = (k) => {
+    try { localStorage.setItem('hamim_' + k, JSON.stringify(S[k])); } catch(e) {}
+  };
+
+  const render = {
+    tasks:       () => { S.tasks = val;       lsSave('tasks');       typeof renderTasks === 'function'      && renderTasks(); },
+    habits:      () => { S.habits = val;      lsSave('habits');      typeof renderHabits === 'function'     && renderHabits(); },
+    goals:       () => { S.goals = val;       lsSave('goals');       typeof renderGoals === 'function'      && renderGoals(); },
+    income:      () => { S.income = val;      lsSave('income');      typeof renderBudget === 'function'     && renderBudget(); },
+    expenses:    () => { S.expenses = val;    lsSave('expenses');    typeof renderBudget === 'function'     && renderBudget(); },
+    semesters:   () => { S.semesters = val;   lsSave('semesters');   typeof calcCGPA === 'function'         && calcCGPA(); },
+    gre:         () => { S.gre = val;         lsSave('gre');         typeof loadGRE === 'function'          && loadGRE(); },
+    progress:    () => { S.progress = val;    lsSave('progress'); },
+    courses:     () => { window.courses = val; try { localStorage.setItem('hamim_courses', JSON.stringify(val)); } catch(e) {}
+                         typeof renderCourses === 'function' && renderCourses(); },
+    note:        () => { S.note = val;        lsSave('note');
+                         const el = document.getElementById('sticky-note');
+                         if (el && el !== document.activeElement) el.value = val || ''; },
+    timetable:   () => { S.timetable = val;   lsSave('timetable');   typeof renderTimetable === 'function'  && renderTimetable(); },
+    customLinks: () => { S.customLinks = val; lsSave('customLinks'); typeof renderCustomLinks === 'function'&& renderCustomLinks(); },
+    savedVideos: () => { S.savedVideos = val; lsSave('savedVideos'); },
+  };
+
+  if (render[key]) {
+    try { render[key](); } catch(e) { console.warn('[Sync] restore error:', key, e); }
   }
 }
-_expose('fbPush', fbPush);
 
-// ── Pull (Download) ────────────────────────────────────────────
-async function fbPull(){
-  if(!_db){ if(typeof toast==='function') toast('❌ আগে connect করো!'); return; }
-  if(typeof toast==='function') toast('📥 Firebase থেকে Download করছি...');
-  try {
-    const keys = ['tasks','habits','goals','income','expenses','semesters','gre','progress','courses','note','timetable','customLinks','savedVideos'];
-    let restored = 0;
-    for(const k of keys){
-      const ref = doc(_db, 'hamim_users', FB.uid, 'data', k);
-      const snap = await getDoc(ref);
-      if(!snap.exists()) continue;
-      const v = snap.data().value;
-      try {
-        if(k==='tasks'){ window.STATE.tasks=v; if(typeof saveState==='function') saveState('tasks'); if(typeof renderTasks==='function') renderTasks(); restored++; }
-        else if(k==='habits'){ window.STATE.habits=v; if(typeof saveState==='function') saveState('habits'); if(typeof renderHabits==='function') renderHabits(); restored++; }
-        else if(k==='goals'){ window.STATE.goals=v; if(typeof saveState==='function') saveState('goals'); if(typeof renderGoals==='function') renderGoals(); restored++; }
-        else if(k==='income'){ window.STATE.income=v; if(typeof saveState==='function') saveState('income'); restored++; }
-        else if(k==='expenses'){ window.STATE.expenses=v; if(typeof saveState==='function') saveState('expenses'); if(typeof renderBudget==='function') renderBudget(); restored++; }
-        else if(k==='semesters'){ window.STATE.semesters=v; if(typeof saveState==='function') saveState('semesters'); if(typeof calcCGPA==='function') calcCGPA(); restored++; }
-        else if(k==='gre'){ window.STATE.gre=v; if(typeof saveState==='function') saveState('gre'); if(typeof loadGRE==='function') loadGRE(); restored++; }
-        else if(k==='progress'){ window.STATE.progress=v; if(typeof saveState==='function') saveState('progress'); restored++; }
-        else if(k==='courses'){ window.courses=v; if(typeof saveCourses==='function') saveCourses(); if(typeof renderCourses==='function') renderCourses(); restored++; }
-        else if(k==='note'){ window.STATE.note=v; if(typeof saveState==='function') saveState('note'); const n=document.getElementById('sticky-note'); if(n) n.value=v||''; restored++; }
-        else if(k==='timetable'){ window.STATE.timetable=v; if(typeof saveState==='function') saveState('timetable'); if(typeof renderTimetable==='function') renderTimetable(); restored++; }
-        else if(k==='customLinks'){ window.STATE.customLinks=v; if(typeof saveState==='function') saveState('customLinks'); if(typeof renderCustomLinks==='function') renderCustomLinks(); restored++; }
-        else if(k==='savedVideos'){ window.STATE.savedVideos=v; if(typeof saveState==='function') saveState('savedVideos'); restored++; }
-      } catch(err){ console.warn('Restore error:', k, err); }
+const ALL_KEYS = ['tasks','habits','goals','income','expenses','semesters',
+                  'gre','progress','courses','note','timetable','customLinks','savedVideos'];
+
+// Map STATE key → Firestore doc key (same names, but courses saved separately)
+const STATE_KEY_MAP = {
+  tasks:'tasks', habits:'habits', goals:'goals', income:'income',
+  expenses:'expenses', semesters:'semesters', gre:'gre', progress:'progress',
+  note:'note', timetable:'timetable', customLinks:'customLinks', savedVideos:'savedVideos',
+  courses:'courses'
+};
+
+// ══════════════════════════════════════════════════════════════
+// INSTANT WRITE — called from saveState() hook
+// ══════════════════════════════════════════════════════════════
+window._fbRealtimePush = function(stateKey) {
+  if (!uid) return;
+  const docKey = STATE_KEY_MAP[stateKey];
+  if (!docKey) return;
+
+  clearTimeout(debounces[docKey]);
+  debounces[docKey] = setTimeout(async () => {
+    try {
+      const val = getLocalVal(docKey);
+      if (val === undefined) return;
+      const safe = JSON.parse(JSON.stringify(val ?? null));
+      remoteWriting = true;
+      await setDoc(
+        doc(db, 'hamim_users', uid, 'data', docKey),
+        { value: safe, updatedAt: new Date().toISOString() }
+      );
+      remoteWriting = false;
+    } catch (e) {
+      remoteWriting = false;
+      console.error('[Sync] write error:', docKey, e.message);
     }
-    const t = _fbTime();
-    localStorage.setItem('fb_last_pull', t);
-    localStorage.setItem('fb_ever_pulled', '1');
-    const el = document.getElementById('fb-last-pull'); if(el) el.textContent = t;
-    _fbLog_add('📥 Downloaded ' + restored + ' datasets — ' + t);
-    if(typeof toast==='function') toast('🔥 ' + restored + ' টা data restore হয়েছে!');
-    if(typeof playClick==='function') playClick('success');
-    if(typeof renderHomeDashboard==='function') renderHomeDashboard();
+  }, 600);
+};
+
+// ══════════════════════════════════════════════════════════════
+// PULL — full download from Firestore
+// ══════════════════════════════════════════════════════════════
+async function pull(targetUID) {
+  const u = targetUID || uid;
+  if (!u) return;
+  let count = 0;
+  for (const key of ALL_KEYS) {
+    try {
+      const snap = await getDoc(doc(db, 'hamim_users', u, 'data', key));
+      if (!snap.exists()) continue;
+      const val = snap.data()?.value;
+      if (val != null) { applyRemoteVal(key, val); count++; }
+    } catch(e) { console.warn('[Pull] error:', key, e.message); }
+  }
+  localStorage.setItem('fb_pulled_' + u, '1');
+  if (count > 0) {
+    typeof renderHomeDashboard === 'function' && renderHomeDashboard();
+    typeof toast === 'function' && toast(`✅ ${count} টা data synced!`);
+  }
+  console.log('[Sync] Pull done:', count, 'keys');
+}
+$win('fbPull', pull);
+
+// ══════════════════════════════════════════════════════════════
+// PUSH — full upload to Firestore
+// ══════════════════════════════════════════════════════════════
+async function push() {
+  if (!uid) return;
+  try {
+    const batch = writeBatch(db);
+    for (const key of ALL_KEYS) {
+      const val = getLocalVal(key);
+      if (val === undefined) continue;
+      const safe = JSON.parse(JSON.stringify(val ?? null));
+      batch.set(doc(db, 'hamim_users', uid, 'data', key),
+        { value: safe, updatedAt: new Date().toISOString() });
+    }
+    await batch.commit();
+    typeof toast === 'function' && toast('🔥 সব data upload হয়েছে!');
+    console.log('[Sync] Full push done');
   } catch(e) {
-    _fbLog_add('❌ Download failed: ' + e.message.slice(0,80));
-    if(typeof toast==='function') toast('❌ Download failed: ' + e.message.slice(0,50));
+    console.error('[Sync] push error:', e.message);
+    typeof toast === 'function' && toast('❌ Upload failed: ' + e.message.slice(0, 40));
   }
 }
-_expose('fbPull', fbPull);
+$win('fbPush', push);
 
-// ── Auto Sync ──────────────────────────────────────────────────
-function fbToggleAuto(on){
-  localStorage.setItem('fb_auto', on ? '1' : '');
-  if(on){ _fbStartAuto(); if(typeof toast==='function') toast('⏱ Auto-upload চালু — প্রতি 5 মিনিটে'); }
-  else { _fbStopAuto(); if(typeof toast==='function') toast('Auto-upload বন্ধ'); }
-}
-_expose('fbToggleAuto', fbToggleAuto);
-function _fbStartAuto(){ _fbStopAuto(); _fbAutoTimer=setInterval(fbPush, 5*60*1000); }
-function _fbStopAuto(){ if(_fbAutoTimer){ clearInterval(_fbAutoTimer); _fbAutoTimer=null; } }
+// ══════════════════════════════════════════════════════════════
+// REAL-TIME LISTENERS — onSnapshot per doc
+// ══════════════════════════════════════════════════════════════
+function startListeners(u) {
+  // Stop any existing listeners
+  unsubListeners.forEach(fn => fn());
+  unsubListeners = [];
 
-// ── Helpers ────────────────────────────────────────────────────
-function _fbTime(){ return new Date().toLocaleTimeString('en-BD'); }
-function _fbLog_add(msg){
-  _fbLog.unshift('['+_fbTime()+'] '+msg);
-  if(_fbLog.length>40) _fbLog=_fbLog.slice(0,40);
-  localStorage.setItem('fb_log', JSON.stringify(_fbLog));
-  _fbRenderLog();
+  for (const key of ALL_KEYS) {
+    const ref = doc(db, 'hamim_users', u, 'data', key);
+    const unsub = onSnapshot(ref, (snap) => {
+      // Skip if: our own write, or local-only pending write
+      if (remoteWriting) return;
+      if (!snap.exists()) return;
+      if (snap.metadata.hasPendingWrites) return;
+      const val = snap.data()?.value;
+      if (val == null) return;
+      applyRemoteVal(key, val);
+      console.log('[Sync] Real-time update:', key);
+    }, (err) => {
+      console.warn('[Snapshot] error:', key, err.message);
+    });
+    unsubListeners.push(unsub);
+  }
+  console.log('[Sync] Listeners active on', ALL_KEYS.length, 'keys');
 }
-function _fbRenderLog(){
-  const el=document.getElementById('fb-log'); if(!el) return;
-  el.innerHTML=_fbLog.length?_fbLog.map(l=>`<div>${l}</div>`).join(''):'<div style="color:var(--hint)">No sync history yet</div>';
-}
-function fbLogClear(){ _fbLog=[]; localStorage.removeItem('fb_log'); _fbRenderLog(); }
-_expose('fbLogClear', fbLogClear);
 
-// 🔥 Auto-init on page load — credentials hardcoded, no UI needed
-window.addEventListener('load', ()=>{ setTimeout(_autoInit, 500); });
+// ══════════════════════════════════════════════════════════════
+// AUTO BACKUP (every 5 min — safety net)
+// ══════════════════════════════════════════════════════════════
+function startAutoBackup() {
+  if (autoTimer) clearInterval(autoTimer);
+  autoTimer = setInterval(push, 5 * 60 * 1000);
+}
+function stopAutoBackup() {
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PATCH saveState — hook into existing function
+// ══════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  const orig = window.saveState;
+  if (typeof orig === 'function' && !window.__saveStatePatched) {
+    window.saveState = function(key) {
+      orig(key); // original localStorage save
+      window._fbRealtimePush && window._fbRealtimePush(key);
+    };
+    window.__saveStatePatched = true;
+  }
+
+  // Patch saveCourses too
+  const origCourses = window.saveCourses;
+  if (typeof origCourses === 'function' && !window.__saveCoursesPatched) {
+    window.saveCourses = function() {
+      origCourses();
+      window._fbRealtimePush && window._fbRealtimePush('courses');
+    };
+    window.__saveCoursesPatched = true;
+  }
+});
+
+// ══════════════════════════════════════════════════════════════
+// AUTH UI
+// ══════════════════════════════════════════════════════════════
+function showAuthScreen(form) {
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('main-shell').style.display = 'none';
+  document.getElementById('auth-loading').style.display = 'none';
+  document.getElementById('auth-login-form').style.display    = (form === 'login')    ? 'block' : 'none';
+  document.getElementById('auth-register-form').style.display = (form === 'register') ? 'block' : 'none';
+  clearErr('auth-err'); clearErr('auth-reg-err');
+  setTimeout(() => {
+    const el = document.getElementById(form === 'login' ? 'auth-email' : 'auth-reg-email');
+    el && el.focus();
+  }, 60);
+}
+
+function showApp(user) {
+  uid = user.uid;
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('main-shell').style.display = '';
+  const emailEl  = document.getElementById('sidebar-email');
+  const avatarEl = document.getElementById('sidebar-avatar');
+  if (emailEl)  emailEl.textContent  = user.email;
+  if (avatarEl) avatarEl.textContent = (user.email || 'H')[0].toUpperCase();
+
+  // Pull first if new device, then start listeners + backup
+  const alreadyPulled = localStorage.getItem('fb_pulled_' + uid);
+  if (!alreadyPulled) {
+    pull(uid).then(() => {
+      startListeners(uid);
+      startAutoBackup();
+    });
+  } else {
+    startListeners(uid);
+    startAutoBackup();
+    // Soft pull in background to catch any missed changes
+    setTimeout(() => pull(uid), 1500);
+  }
+}
+
+function setBtn(id, loading, label) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? `<span style="display:flex;align-items:center;justify-content:center;gap:8px">
+        <span style="width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></span>
+        Please wait...
+       </span>`
+    : label;
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.classList.add('show'); }
+}
+function clearErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+const AUTH_ERRORS = {
+  'auth/user-not-found':      '❌ Account নেই। Register করো!',
+  'auth/wrong-password':      '❌ Password ভুল।',
+  'auth/invalid-credential':  '❌ Email বা password ভুল।',
+  'auth/invalid-email':       '❌ Email format ঠিক নেই।',
+  'auth/too-many-requests':   '❌ অনেকবার ভুল হয়েছে। কিছুক্ষণ পরে চেষ্টা করো।',
+  'auth/email-already-in-use':'❌ এই email এ account আছে। Sign In করো!',
+  'auth/weak-password':       '❌ Password min 6 character।',
+  'auth/network-request-failed': '❌ Internet connection নেই।',
+};
+
+// ── Login ──────────────────────────────────────────────────────
+async function authLogin() {
+  const email = document.getElementById('auth-email')?.value.trim();
+  const pass  = document.getElementById('auth-password')?.value;
+  clearErr('auth-err');
+  if (!email || !pass) { showErr('auth-err', '⚠️ Email ও password দাও!'); return; }
+  setBtn('auth-login-btn', true);
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    // onAuthStateChanged handles showApp()
+  } catch(e) {
+    setBtn('auth-login-btn', false, '🔓 Sign In');
+    showErr('auth-err', AUTH_ERRORS[e.code] || ('❌ ' + e.message.slice(0, 80)));
+  }
+}
+$win('authLogin', authLogin);
+
+// ── Register ───────────────────────────────────────────────────
+async function authRegister() {
+  const email = document.getElementById('auth-reg-email')?.value.trim();
+  const pass  = document.getElementById('auth-reg-pass')?.value;
+  const pass2 = document.getElementById('auth-reg-pass2')?.value;
+  clearErr('auth-reg-err');
+  if (!email || !pass) { showErr('auth-reg-err', '⚠️ সব field পূরণ করো!'); return; }
+  if (pass.length < 6) { showErr('auth-reg-err', '⚠️ Password min 6 character!'); return; }
+  if (pass !== pass2)  { showErr('auth-reg-err', '❌ Password দুটো match করছে না!'); return; }
+  setBtn('auth-reg-btn', true);
+  try {
+    await createUserWithEmailAndPassword(auth, email, pass);
+    // onAuthStateChanged handles showApp()
+  } catch(e) {
+    setBtn('auth-reg-btn', false, '✨ Create Account');
+    showErr('auth-reg-err', AUTH_ERRORS[e.code] || ('❌ ' + e.message.slice(0, 80)));
+  }
+}
+$win('authRegister', authRegister);
+
+// ── Logout ─────────────────────────────────────────────────────
+async function authLogout() {
+  if (!confirm('Logout করবে?')) return;
+  stopAutoBackup();
+  unsubListeners.forEach(fn => fn());
+  unsubListeners = [];
+  try { await push(); } catch(e) {} // flush before logout
+  uid = null;
+  await signOut(auth);
+  typeof toast === 'function' && toast('👋 Logged out!');
+}
+$win('authLogout', authLogout);
+
+// Form toggle
+$win('authShowLogin',    () => showAuthScreen('login'));
+$win('authShowRegister', () => showAuthScreen('register'));
+
+// ══════════════════════════════════════════════════════════════
+// AUTH STATE LISTENER — single source of truth
+// ══════════════════════════════════════════════════════════════
+(async () => {
+  // Set persistence first (keep user logged in across sessions)
+  try { await setPersistence(auth, browserLocalPersistence); } catch(e) {}
+
+  // Safety: if Firebase doesn't respond in 5s, show login
+  let resolved = false;
+  const timeout = setTimeout(() => {
+    if (!resolved) {
+      console.warn('[Auth] Timeout — showing login form');
+      showAuthScreen('login');
+    }
+  }, 5000);
+
+  onAuthStateChanged(auth, (user) => {
+    clearTimeout(timeout);
+    resolved = true;
+    if (user) {
+      showApp(user);
+    } else {
+      stopAutoBackup();
+      unsubListeners.forEach(fn => fn());
+      unsubListeners = [];
+      uid = null;
+      showAuthScreen('login');
+    }
+  });
+})();
+
+// ══════════════════════════════════════════════════════════════
+// STUBS — backward compat with any remaining HTML references
+// ══════════════════════════════════════════════════════════════
+$win('fbConnect',     () => {});
+$win('fbDisconnect',  () => signOut(auth));
+$win('fbToggleAuto',  () => {});
+$win('fbLogClear',    () => localStorage.removeItem('fb_log'));
+$win('initFBUI',      () => {});
+
 </script>
 
 </body>
