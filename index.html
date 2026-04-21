@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2152,6 +2153,8 @@ const STATE = {
   ttTimers: LS.get('ttTimers') || {},
   savedVideos: LS.get('savedVideos') || [],
 };
+// ⚡ CRITICAL: expose STATE globally so Firebase module can access it
+window.STATE = STATE;
 
 function saveState(key){
   LS.set(key, STATE[key]);
@@ -4034,6 +4037,7 @@ function getNoKeyFallback(msg){
 // COURSE MANAGER
 // ═══════════════════════════════════════════════════════════════════
 let courses = JSON.parse(localStorage.getItem('hamim_courses') || '[]');
+window.courses = courses; // expose globally for Firebase sync
 let editingCourseIdx = -1;
 let courseFilter = 'all';
 
